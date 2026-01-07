@@ -1,11 +1,13 @@
 require("dotenv").config();
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth.routes");
+
 
 const app = express();
 
 app.use(express.json());
-
+app.use(cookieParser());
 const requirebody = (req, res, next) => {
 	if (!req.body) {
 		return res.status(400).json({ error: "Body required" });
