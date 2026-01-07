@@ -1,11 +1,10 @@
 const crypto = require("crypto");
-const bcrypt = require("bcrypt");
 const generateRefreshToken = () => {
-	return crypto.randomBytes(64).toString("hex");
+  return crypto.randomBytes(64).toString("hex");
 };
 
-const hashToken = async (token) => {
-	return bcrypt.hash(token, 10);
+const hashToken = (token) => {
+  return crypto.createHash("sha256").update(token).digest("hex");
 };
 
 module.exports = { generateRefreshToken, hashToken };
