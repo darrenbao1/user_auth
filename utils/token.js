@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const generateRefreshToken = () => {
+const generateToken = () => {
   return crypto.randomBytes(64).toString("hex");
 };
 
@@ -7,4 +7,4 @@ const hashToken = (token) => {
   return crypto.createHash("sha256").update(token).digest("hex");
 };
 
-module.exports = { generateRefreshToken, hashToken };
+module.exports = {  generateToken, hashToken };
