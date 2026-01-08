@@ -21,6 +21,18 @@ const login = async (email, password) => {
 	return { user, accessToken, refreshToken };
 };
 
+const logout = async(refreshToken) => {
+	const tokenHash = hashToken(refreshToken);
+
+	const storedToken = await refreshTokenRepo.findValidToken(tokenHash);
+
+	if(storedToken) {
+		await refreshTokenRepo.revokeToken(storedToken.id);
+	}
+
+	return;
+}
+
 const refreshsession = async (refreshToken) => {
 
 	if (!refreshToken) {
@@ -49,4 +61,4 @@ const refreshsession = async (refreshToken) => {
 
 }
 
-module.exports = { signup, login, refreshsession };
+module.exports = { signup, login, refreshsession,logout };

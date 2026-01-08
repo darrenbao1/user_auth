@@ -14,7 +14,7 @@ router.post("/login", async (req, res, next) => {
       secure: false, //Set to true when in production
       sameSite: "strict",
       maxAge: process.env.REFRESH_TOKEN_TTL * 1000,
-      path: "/auth/refresh",
+      path: "/auth",
     });
 
     res.status(201).json({
@@ -47,7 +47,7 @@ router.post("/refresh", async (req, res, next) => {
       secure: false, //Set to true when in production
       sameSite: "strict",
       maxAge: process.env.REFRESH_TOKEN_TTL * 1000,
-      path: "/auth/refresh",
+      path: "/auth",
     });
 	res.status(200).json({accessToken});
   } catch (err) {
@@ -59,6 +59,17 @@ router.post("/refresh", async (req, res, next) => {
     }
     next(err);
   }
+});
+
+router.post("/logout", async (req, res, next) => {
+	try {
+		await authService.logout(req.cookies?.refreshToken);
+		res.clearCookie("refreshToken",{path:"/auth"});
+		res.status(200).json({message: "Logout successful"});
+	}
+	catch(err) {
+		next(err);
+	}
 });
 
 module.exports = router;
