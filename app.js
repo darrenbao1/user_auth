@@ -8,14 +8,9 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-const requirebody = (req, res, next) => {
-	if (!req.body) {
-		return res.status(400).json({ error: "Body required" });
-	}
-	next();
-};
 
-app.use("/auth", requirebody, authRoutes);
+
+app.use("/auth", authRoutes);
 
 app.use((err, req, res, next) => {
 	console.error(err);

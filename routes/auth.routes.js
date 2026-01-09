@@ -31,7 +31,21 @@ router.post("/login", async (req, res, next) => {
 router.post("/signup", async (req, res, next) => {
   try {
     const user = await authService.signup(req.body.email, req.body.password);
-    res.status(201).json({ message: "User Created", user });
+    const emailVerificationToken = await authService.createEmailVerificationToken(user.id);
+    const verificationLink = `${process.env.USER_AUTH_URL}/verify-email?token=${emailVerificationToken}`;
+
+    await fetch(process.env.EMAIL_SERVICE_URL + "/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: user.email,
+        subject: "Verify your email",
+        text: `Please verify your email by clicking on the following link: ${verificationLink}`,
+        html: `<p>Click <a href="${verificationLink}">here</a> to verify your email</p>`
+      })
+    }
+    );
+    res.status(201).json({ message: "Signup successful, verification email sent" });
   } catch (err) {
     next(err);
   }
@@ -83,9 +97,9 @@ router.post("/get-email-verification-token", async (req, res, next) => {
 	
 })
 
-router.post("/verify-email", async (req, res, next) => {
+router.get("/verify-email", async (req, res, next) => {
   try {
-    const { token } = req.body;
+    const { token } = req.query;
     if (!token) {
       return res
         .status(400)
