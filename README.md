@@ -55,20 +55,20 @@ services:
     build: ./user_auth
     container_name: user-auth-backend
     ports:
-      - "${PORT}:3000"             # binds host PORT from .env to container 3000
+      - "${PORT}:3000"             
     env_file:
-      - .env                        # loads all environment variables from .env
+      - .env                        
     depends_on:
       - user-auth-db
     volumes:
-      - ./user_auth:/usr/src/app             # live code sync for development
-    command: npm run dev             # optional, overrides CMD in Dockerfile
+      - ./user_auth:/usr/src/app             
+    command: npm run dev             
 
   user-auth-db:
     image: postgres:15
     container_name: user-auth-db
     ports:
-      - "5432:5432"
+      - "{DB_PORT}:5432"
     environment:
       POSTGRES_USER: ${DB_USER}     # pick from .env
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -80,7 +80,7 @@ services:
     build: ./email_service
     container_name: email-service
     ports:
-      - "4000:3000"
+      - "{EMAIL_PORT}:3000"
     env_file:
       - .env
     volumes:
